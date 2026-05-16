@@ -127,9 +127,17 @@ public class Renderer {
     private void crearTriangulo(){
         // Datos de los 3 vértices en coordenadas locales (-0.5 a 0.5)
         float[] vertices ={
-             0.0f,  0.5f, 0.0f, // Arriba
+       /*   0.0f,  0.5f, 0.0f, // Arriba
             -0.5f, -0.5f, 0.0f, // abajo Izquierda
              0.5f, -0.5f, 0.0f  // Derecha
+        */
+
+
+            0.5f,  0.0f, 0.0f, // PUNTA (Derecha centro)
+           -0.5f,  0.4f, 0.0f, // ATRÁS ARRIBA (Izquierda arriba)
+           -0.5f, -0.4f, 0.0f  // ATRÁS ABAJO (Izquierda abajo)
+
+           
         };
         // Aquí faltaría la lógica de generar VBO/VAO similar a crearCuadrado()
         vaoTriangulo=GL30.glGenVertexArrays();

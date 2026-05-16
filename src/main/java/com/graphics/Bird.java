@@ -67,8 +67,8 @@ public class Bird {
         float rotacion = map(velY, MAX_FALL_VELOCITY, JUMP_IMPULSE, (float)toRadians(-45), (float)toRadians(30));
         
         // 1. COLA
-       // renderer.drawRect(x - BIRD_ANCHO * 0.45f, y, BIRD_ANCHO * 0.4f, BIRD_ALTO * 0.6f, red * 0.8f, green * 0.8f, blue * 0.8f, rotacion);
-        renderer.drawTriangle(x + 0.05f, y - 0.01f, 0.04f, 0.04f, 1.0f, 0.7f, 0.0f, rotacion); 
+        renderer.drawRect(x - BIRD_ANCHO * 0.45f, y, BIRD_ANCHO * 0.4f, BIRD_ALTO * 0.6f, red * 0.8f, green * 0.8f, blue * 0.8f, rotacion);
+       // renderer.drawTriangulo(x + 0.05f, y - 0.01f, 0.04f, 0.04f, 1.0f, 0.7f, 0.0f, rotacion); 
         // 2. CUERPO
         renderer.drawRect(x, y, BIRD_ANCHO, BIRD_ALTO, red, green, blue, rotacion);
 
@@ -77,8 +77,9 @@ public class Bird {
         renderer.drawRect(x, y + offsetAlaY, BIRD_ANCHO * 0.6f, BIRD_ALTO * 0.4f, red * 1.2f, green * 1.2f, blue * 1.2f, rotacion);
 
         // 4. PICO
-        renderer.drawRect(x + BIRD_ANCHO * 0.5f, y - BIRD_ALTO * 0.1f, BIRD_ANCHO * 0.4f, BIRD_ALTO * 0.2f, 1.0f, 0.7f, 0.0f, rotacion); 
-        
+        //renderer.drawRect(x + BIRD_ANCHO * 0.5f, y - BIRD_ALTO * 0.1f, BIRD_ANCHO * 0.4f, BIRD_ALTO * 0.2f, 1.0f, 0.7f, 0.0f, rotacion); 
+        renderer.drawTriangulo(x + 0.06f, y-0.025f, 0.04f, 0.03f, 1.0f, 0.7f, 0.0f, 0.0f);
+        // renderer.drawTriangulo(x + 0.07f, y, 0.04f, 0.03f, 1.0f, 0.7f, 0.0f, 0.0f); 
         // 5. OJO
         renderer.drawRect(x + BIRD_ANCHO * 0.2f, y + BIRD_ALTO * 0.15f, BIRD_ANCHO * 0.2f, BIRD_ALTO * 0.2f, 1.0f, 1.0f, 1.0f, rotacion); 
         renderer.drawRect(x + BIRD_ANCHO * 0.25f, y + BIRD_ALTO * 0.15f, BIRD_ANCHO * 0.08f, BIRD_ALTO * 0.08f, 0.0f, 0.0f, 0.0f, rotacion);
