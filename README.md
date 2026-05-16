@@ -30,5 +30,6 @@ El juego soporta un modo cooperativo/competitivo local para dos jugadores simult
 ### Compilación y Ejecución (Consola)
 
 Si tu proyecto utiliza **Maven**, ejecuta en la terminal de la raíz:
-```bash
-call mvn exec:exec
+```bash o cmd
+ mvn exec:exec
+
