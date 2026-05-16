@@ -44,7 +44,7 @@
     -->
     <mainClass>com.graphics.AppFlappyBird</mainClass>
     <!-- Argumentos por defecto de la JVM (vacíos en la mayoría de sistemas) -->
-    <jvm.args></jvm.args>
+    
   </properties>
 
   <!--

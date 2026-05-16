@@ -31,4 +31,4 @@ El juego soporta un modo cooperativo/competitivo local para dos jugadores simult
 
 Si tu proyecto utiliza **Maven**, ejecuta en la terminal de la raíz:
 ```bash
-mvn clean compile exec:java -Dexec.mainClass="com.graphics.Main"
+call mvn exec:exec

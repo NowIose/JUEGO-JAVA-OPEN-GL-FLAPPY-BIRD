@@ -1,2 +1,9 @@
 com\graphics\App.class
+com\graphics\Pipe.class
+com\graphics\GestorAudio.class
+com\graphics\FlappyGame.class
+com\graphics\Renderer.class
+com\graphics\Escenario.class
+com\graphics\Bird.class
 com\graphics\AppFlappyBird.class
+com\graphics\ManejadorEntrada.class
