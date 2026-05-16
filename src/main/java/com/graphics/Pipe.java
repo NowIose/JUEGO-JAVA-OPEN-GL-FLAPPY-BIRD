@@ -18,6 +18,26 @@ public class Pipe {
         this.gapCenterY = gapCenterY;
         this.scored = false;
     }
+    // --- Nuevo método en Pipe.java ---
+    public void dibujar(Renderer renderer) {
+        // --- TUBERÍA SUPERIOR ---
+        float topPipeHeight = this.getTopPipeHeight();
+        float topPipeCenterY = this.getTopPipeY() + topPipeHeight * 0.5F;
+        // Cuerpo
+        renderer.drawRect(this.x, topPipeCenterY, 0.18F, topPipeHeight, 0.18F, 0.7F, 0.25F, 0.0F);
+        // Pestaña
+        float pestanaTopY = this.getGapTopY() + 0.025F;
+        renderer.drawRect(this.x, pestanaTopY, 0.22F, 0.05F, 0.22F, 0.8F, 0.3F, 0.0F);
+
+        // --- TUBERÍA INFERIOR ---
+        float bottomPipeHeight = this.getBottomPipeHeight();
+        float bottomPipeCenterY = this.getBottomPipeY();
+        // Cuerpo
+        renderer.drawRect(this.x, bottomPipeCenterY, 0.18F, bottomPipeHeight, 0.18F, 0.7F, 0.25F, 0.0F);
+        // Pestaña
+        float pestanaBottomY = this.getGapBottomY() - 0.025F;
+        renderer.drawRect(this.x, pestanaBottomY, 0.22F, 0.05F, 0.22F, 0.8F, 0.3F, 0.0F);
+    }
 
     // --- Métodos de ayuda para el renderizado ---
 

@@ -47,6 +47,7 @@ public class AppFlappyBird {
         renderer.init();
 
         game = new FlappyGame(window, renderer);
+        GestorAudio.iniciarMusicaFondo("/sonidos/music.wav");
     }
 
     private void loop() {

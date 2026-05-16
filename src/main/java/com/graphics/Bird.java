@@ -57,6 +57,7 @@ public class Bird {
         float mitadAlto = BIRD_ALTO / 2.0f;
         if (this.y + mitadAlto >= 1.0f || this.y - mitadAlto <= -1.0f) {
             this.y = Math.max(-1.0f + mitadAlto, Math.min(1.0f - mitadAlto, this.y));
+            GestorAudio.reproducir("/sonidos/muerte.wav");
             this.vivo = false; 
         }
     }

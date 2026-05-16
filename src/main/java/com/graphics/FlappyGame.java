@@ -54,7 +54,7 @@ public class FlappyGame {
         this.pipes = new ArrayList<>();
         this.random = new Random();
         this.players = new ArrayList<>();
-        
+        GestorAudio.iniciarMusicaFondo("/sonidos/music.wav");
         resetGame(); // Prepara el juego para empezar
     }
 
@@ -65,7 +65,7 @@ public class FlappyGame {
         players.clear(); 
 
         // Requerimiento modo de dos jugadores 
-        players.add(new Bird(-0.45f, 0.0f, 0.98f, 0.85f, 0.20f, GLFW.GLFW_KEY_0)); // Jugador 1: amarillo, ESPACIO
+        players.add(new Bird(-0.45f, 0.0f, 0.98f, 0.85f, 0.20f, GLFW.GLFW_KEY_SPACE)); // Jugador 1: amarillo, ESPACIO
         players.add(new Bird(-0.30f, 0.0f, 0.20f, 0.60f, 0.90f, GLFW.GLFW_KEY_W));     // Jugador 2: azul, W
 
         pipes.clear(); 
@@ -88,6 +88,7 @@ public class FlappyGame {
         // Reiniciar el juego con la tecla 'R' si está en Game Over
         if (ManejadorEntrada.esTeclaPresionada(GLFW.GLFW_KEY_R) && gameOver) {
             resetGame();
+            GestorAudio.iniciarMusicaFondo("/sonidos/music.wav");
         }
 
         // Si el juego no ha empezado, detecta el primer salto de CUALQUIER pájaro para iniciar la partida.
@@ -149,13 +150,15 @@ public class FlappyGame {
                 for (Bird player : players) {
                     if (player.isAlive()) {
                         if (checkCollision(currentPipe, player)) {
-                            player.setAlive(false); 
+                            player.setAlive(false);
+                            GestorAudio.reproducir("/sonidos/muerte.wav");
                         }
 
                         // Puntuación: si el pájaro pasa la tubería
                         if (currentPipe.x + (Pipe.PIPE_WIDTH * 0.5f) < player.getX() && !currentPipe.scored) {
                             currentPipe.scored = true; 
                             player.incrementScore();    
+                            GestorAudio.reproducir("/sonidos/punto.wav");
                             updateWindowTitle();        
                         }
                     }
@@ -168,33 +171,124 @@ public class FlappyGame {
             }
         }
     }
+    private void dibujarNumero(int numero, float x, float y, float w, float h, float r, float g, float b) {
+      String numStr = String.valueOf(numero);
+      float spacing = w * 1.5f; // Espaciado entre dígitos
+      // Centrar el número completo
+      float startX = x - (numStr.length() - 1) * spacing / 2.0f;
 
+      // Mapa de 7 segmentos para los números del 0 al 9
+      boolean[][] segmentos = {
+          {true, true, true, true, true, true, false},       // 0
+          {false, true, true, false, false, false, false},   // 1
+          {true, true, false, true, true, false, true},      // 2
+          {true, true, true, true, false, false, true},      // 3
+          {false, true, true, false, false, true, true},     // 4
+          {true, false, true, true, false, true, true},      // 5
+          {true, false, true, true, true, true, true},       // 6
+          {true, true, true, false, false, false, false},    // 7
+          {true, true, true, true, true, true, true},        // 8
+          {true, true, true, true, false, true, true}        // 9
+      };
+
+      for (int i = 0; i < numStr.length(); i++) {
+         int digito = numStr.charAt(i) - '0';
+         boolean[] seg = segmentos[digito];
+         float px = startX + i * spacing;
+         float t = w * 0.25f; // Grosor de la línea
+
+         // A (Arriba)
+         if(seg[0]) this.renderer.drawRect(px, y + h/2, w, t, r, g, b, 0.0F);
+         // B (Arriba Derecha)
+         if(seg[1]) this.renderer.drawRect(px + w/2 - t/2, y + h/4, t, h/2, r, g, b, 0.0F);
+         // C (Abajo Derecha)
+         if(seg[2]) this.renderer.drawRect(px + w/2 - t/2, y - h/4, t, h/2, r, g, b, 0.0F);
+         // D (Abajo)
+         if(seg[3]) this.renderer.drawRect(px, y - h/2, w, t, r, g, b, 0.0F);
+         // E (Abajo Izquierda)
+         if(seg[4]) this.renderer.drawRect(px - w/2 + t/2, y - h/4, t, h/2, r, g, b, 0.0F);
+         // F (Arriba Izquierda)
+         if(seg[5]) this.renderer.drawRect(px - w/2 + t/2, y + h/4, t, h/2, r, g, b, 0.0F);
+         // G (Centro)
+         if(seg[6]) this.renderer.drawRect(px, y, w, t, r, g, b, 0.0F);
+      }
+   }
     /**
      * Dibuja todos los elementos del juego en la pantalla.
      */
     public void render() {
-        // Dibujamos el escenario (fondo, suelo, nubes)
-        escenario.dibujar(renderer);
+      // 1. Dibujar el fondo
+      this.escenario.dibujar(this.renderer);
 
-        // --- Dibujar Tuberías ---
-        for (Pipe currentPipe : pipes) {
-            float topPipeCenterY = currentPipe.getTopPipeY() + currentPipe.getTopPipeHeight() * 0.5f;
-            renderer.drawRect(currentPipe.x, topPipeCenterY, Pipe.PIPE_WIDTH, currentPipe.getTopPipeHeight(), 0.18f, 0.70f, 0.25f, 0.0f);
+      // 2. Dibujar las Tuberías (Se dibujan ANTES del HUD para que queden por detrás)
+     for(Pipe currentPipe : this.pipes) {
+         currentPipe.dibujar(this.renderer);
+      }
 
-            float bottomPipeCenterY = currentPipe.getBottomPipeY();
-            renderer.drawRect(currentPipe.x, bottomPipeCenterY, Pipe.PIPE_WIDTH, currentPipe.getBottomPipeHeight(), 0.18f, 0.70f, 0.25f, 0.0f);
-        }
+      // 3. Dibujar a los jugadores
+      for(Bird player : this.players) {
+         player.dibujar(this.renderer);
+      }
 
-        // --- Dibujar Pájaros ---
-        for (Bird player : players) {
-            player.dibujar(renderer); 
-        }
+      // 4. Dibujar el HUD superior (Fondo oscuro)
+      this.renderer.drawRect(0.0F, 0.94F, 2.0F, 0.12F, 0.05F, 0.05F, 0.05F, 0.0F);
+      
+      // Barra de velocidad
+      float pVelHUD = (this.currentPipeSpeed - 0.62F) / 0.88F;
+      pVelHUD = Math.min(1.0F, Math.max(0.01F, pVelHUD));
+      this.renderer.drawRect(0.0F, 0.9F, 0.5F, 0.02F, 0.2F, 0.2F, 0.2F, 0.0F);
+      this.renderer.drawRect(0.0F, 0.9F, 0.5F * pVelHUD, 0.02F, pVelHUD, 1.0F - pVelHUD, 0.0F, 0.0F);
 
-        // --- Overlay de Game Over ---
-        if (gameOver) {
-            renderer.drawRect(0.0f, 0.0f, 2.0f, 0.22f, 0.15f, 0.18f, 0.22f, 0.0f); 
-        }
-    }
+      // 5. Dibujar Puntajes usando el método de 7 segmentos
+      for(int i = 0; i < this.players.size(); ++i) {
+         Bird bHUD = (Bird)this.players.get(i);
+         float rHUD = i == 0 ? 1.0F : 0.3F;
+         float gHUD = i == 0 ? 0.9F : 0.6F;
+         float bHUD_color = i == 0 ? 0.2F : 1.0F;
+
+         // Separar la posición del Jugador 1 (Izquierda) y Jugador 2 (Derecha)
+         float posX = i == 0 ? -0.85F : 0.85F;
+         
+         // Ancho: 0.04f, Alto: 0.08f
+         dibujarNumero(bHUD.getScore(), posX, 0.95F, 0.04F, 0.08F, rHUD, gHUD, bHUD_color);
+      }
+
+      
+     // Pantalla final de Game Over
+      if (this.gameOver) {
+         // 1. Panel Principal (Fondo oscuro con un borde blanco alrededor)
+         this.renderer.drawRect(0.0F, 0.0F, 1.1F, 0.9F, 1.0F, 1.0F, 1.0F, 0.0F); // Borde
+         this.renderer.drawRect(0.0F, 0.0F, 1.05F, 0.85F, 0.15F, 0.15F, 0.18F, 0.0F); // Fondo gris oscuro
+
+         // 2. Gran 'X' Roja (Indicador visual de GAME OVER)
+         // Usamos radianes para rotar los rectángulos 45 grados (Math.PI / 4 ≈ 0.785f)
+         float angulo45 = 0.785398f;
+         this.renderer.drawRect(0.0F, 0.25F, 0.35F, 0.06F, 0.9F, 0.2F, 0.2F, angulo45);
+         this.renderer.drawRect(0.0F, 0.25F, 0.35F, 0.06F, 0.9F, 0.2F, 0.2F, -angulo45);
+
+         // 3. Mostrar puntajes finales
+         // --- Jugador 1 (Izquierda) ---
+         // Cuadrito representativo del P1 (usando sus colores)
+         this.renderer.drawRect(-0.25F, -0.05F, 0.15F, 0.15F, 1.0F, 0.9F, 0.2F, 0.0F); 
+         // Puntaje final del P1
+         dibujarNumero(((Bird)this.players.get(0)).getScore(), -0.25F, -0.2F, 0.06F, 0.12F, 1.0F, 1.0F, 1.0F);
+         
+         // --- Jugador 2 (Derecha) ---
+         if (this.players.size() > 1) {
+            // Cuadrito representativo del P2
+            this.renderer.drawRect(0.25F, -0.05F, 0.15F, 0.15F, 0.3F, 0.6F, 1.0F, 0.0F); 
+            // Puntaje final del P2
+            dibujarNumero(((Bird)this.players.get(1)).getScore(), 0.25F, -0.2F, 0.06F, 0.12F, 1.0F, 1.0F, 1.0F);
+         }
+
+         // 4. Botón visual de "Reiniciar"
+         // Rectángulo Verde simulando el botón
+         this.renderer.drawRect(0.0F, -0.45F, 0.35F, 0.12F, 0.2F, 0.8F, 0.3F, 0.0F);
+         // Símbolo de "Play" encima del botón verde
+         // Al triángulo que apunta hacia arriba, lo rotamos -90 grados (-1.57f) para que apunte a la derecha
+         this.renderer.drawTriangulo(0.0F, -0.45F, 0.08F, 0.08F, 1.0F, 1.0F, 1.0F, -1.5708f);
+      }
+   }
 
     private void spawnPipe() {
         float gapCenterY = GAP_MIN_CENTER_Y + random.nextFloat() * (GAP_MAX_CENTER_Y - GAP_MIN_CENTER_Y);
@@ -226,6 +320,9 @@ public class FlappyGame {
             if (!player.isAlive()) title.append(" (KO)");
             }
         
+        // Mostrar velocidad actual en el título (REQ 2.3)
+        title.append(" | Vel: ").append(String.format("%.2f", currentPipeSpeed));
+
         if (!gameStarted) title.append(" | Pulsa ESPACIO o W para saltar");
         else if (gameOver) title.append(" | GAME OVER - Pulsa R para reiniciar");
         else title.append(" | Nivel: ").append(dificultad);
