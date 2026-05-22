@@ -66,8 +66,8 @@ public class FlappyGame {
 
         // Requerimiento modo de dos jugadores 
         players.add(new Bird(-0.45f, 0.0f, 0.98f, 0.85f, 0.20f, GLFW.GLFW_KEY_SPACE)); // Jugador 1: amarillo, ESPACIO
-        players.add(new Bird(-0.30f, 0.0f, 0.20f, 0.60f, 0.90f, GLFW.GLFW_KEY_W));     // Jugador 2: azul, W
-
+        players.add(new Bird(-0.45f, 0.0f, 0.20f, 0.60f, 0.90f, GLFW.GLFW_KEY_W));     // Jugador 2: azul, W
+        players.add(new Bird(-0.45f,0.0f,0.30f, 0.70f, 0.1f, GLFW.GLFW_KEY_0));//jugador 3 :verde 0
         pipes.clear(); 
         gameStarted = false; 
         gameOver = false;    
@@ -76,7 +76,7 @@ public class FlappyGame {
         // Reinicia la dificultad
         currentPipeSpeed = PIPE_SPEED_BASE;
         currentPipeSpawnInterval = PIPE_SPAWN_INTERVAL_BASE;
-        dificultad = 0;
+        dificultad =0;
 
         updateWindowTitle(); 
     }
@@ -126,11 +126,12 @@ public class FlappyGame {
             }
         }
         
-        if (allBirdsDead) {
+        if (allBirdsDead || players.get(2).getScore()>=5){
             gameOver = true;
             updateWindowTitle();
             return;
         }
+        
         
         // --- Actualizar Tuberías ---
         if (gameStarted) {
@@ -245,10 +246,25 @@ public class FlappyGame {
          float rHUD = i == 0 ? 1.0F : 0.3F;
          float gHUD = i == 0 ? 0.9F : 0.6F;
          float bHUD_color = i == 0 ? 0.2F : 1.0F;
+         if (i==0)
+            bHUD_color=0.2f;
+         else
+            if(i==1)
+            bHUD_color=1.0f;
+            else
+                bHUD_color=0.3f;
+
 
          // Separar la posición del Jugador 1 (Izquierda) y Jugador 2 (Derecha)
-         float posX = i == 0 ? -0.85F : 0.85F;
+         float posX ;//= i == 0 ? -0.85F : 0.85F;
          
+         if(i==0)
+            posX=-0.85F;
+         else
+            if(i==1)
+            posX=0.85F;
+            else
+                posX=0.2f;
          // Ancho: 0.04f, Alto: 0.08f
          dibujarNumero(bHUD.getScore(), posX, 0.95F, 0.04F, 0.08F, rHUD, gHUD, bHUD_color);
       }
@@ -281,8 +297,7 @@ public class FlappyGame {
             dibujarNumero(((Bird)this.players.get(1)).getScore(), 0.25F, -0.2F, 0.06F, 0.12F, 1.0F, 1.0F, 1.0F);
          }
 
-         // 4. Botón visual de "Reiniciar"
-         // Rectángulo Verde simulando el botón
+         // Rectángulo Verde simulando el botón no lo acabe r nomas
          this.renderer.drawRect(0.0F, -0.45F, 0.35F, 0.12F, 0.2F, 0.8F, 0.3F, 0.0F);
          // Símbolo de "Play" encima del botón verde
          // Al triángulo que apunta hacia arriba, lo rotamos -90 grados (-1.57f) para que apunte a la derecha
